@@ -1,10 +1,15 @@
+import os
 from fastapi import FastAPI, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from app.parser import parse_pdf_sections
 from app.embedder_async import embed_and_store_async
 from app.retriever_async import retrieve_context
-import httpx, asyncio
 import ollama
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OLLAMA_CHAT_MODEL = os.getenv("OLLAMA_CHAT_MODEL", "deepseek-r1")
 
 app = FastAPI()
 
@@ -45,7 +50,7 @@ Answer:"""
 
     try:
         response = ollama.chat(
-            model="deepseek-r1",
+            model= OLLAMA_CHAT_MODEL,
             messages=[{"role": "user", "content": prompt}]
         )
         answer = response["message"]["content"]
